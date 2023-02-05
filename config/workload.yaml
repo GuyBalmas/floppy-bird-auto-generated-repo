@@ -1,0 +1,41 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: floppy-bird
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    apps.tanzu.vmware.com/has-tests: "true"
+    app.kubernetes.io/part-of: floppy-bird
+    apis.apps.tanzu.vmware.com/register-api: "true"
+spec:
+  build:
+    env:
+    - name: BP_JVM_VERSION
+      value: "17"
+  env:
+  - name: GREETING_MSG
+    value: I'm a floppy bird!
+  - name: GREETING_DESC
+    value: tweet tweet
+  params:
+  - name: annotations
+    value:
+      autoscaling.knative.dev/minScale: "1"
+  - name: testing_pipeline_matching_labels
+    value:
+      apps.tanzu.vmware.com/framework: maven
+      apps.tanzu.vmware.com/pipeline: test
+  - name: api_descriptor
+    value:
+      type: openapi
+      location:
+        path: /api-docs
+      owner: cloud-native-applications-team
+      system: floppy-birds
+      description: A set of API endpoints to view k8s data of floppy-bird application.
+  source:
+    git:
+      ref:
+        branch: main
+      url: https://github.com/vmware-tanzu/application-accelerator-samples.git
+    subPath: tanzu-java-web-app
